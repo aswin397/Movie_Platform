@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New User - Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e0e7ff, #f0f4f8);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        h2 {
+            margin-top: 0;
+            color: #0044cc;
+            font-size: 28px;
+        }
+        .form-container {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .form-container form {
+            margin-bottom: 20px;
+        }
+        .form-container label {
+            font-weight: bold;
+            color: #555;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+        .form-container button {
+            display: inline-block;
+            background-color: #0044cc;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .form-container button:hover {
+            background-color: #0033aa;
+            transform: scale(1.05);
+        }
+        .form-container a {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .form-container a:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add New User</h2>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <div class="form-container">
+            <form method="post" action="{% url 'movie_platform:add_user' %}">
+                {% csrf_token %}
+                
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" name="first_name" required>
+
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="submit">Add User</button>
+            </form>
+
+            <a href="{% url 'movie_platform:admin_profile' %}">Back to Admin Profile</a>
+        </div>
+    </div>
+</body>
+</html>

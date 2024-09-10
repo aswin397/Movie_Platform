@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Movie Platform</title>
+    <style>
+        /* Reset default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f0f4f8, #e0e7ff);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background: #0044cc;
+            color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .navbar-logo {
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .navbar-menu {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        .navbar-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.3s;
+        }
+        .navbar-menu a:hover {
+            color: #ffeb3b;
+            transform: scale(1.1);
+        }
+        .navbar-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 3px;
+            cursor: pointer;
+        }
+        .navbar-toggle div {
+            width: 25px;
+            height: 3px;
+            background: #ffffff;
+            transition: all 0.3s;
+        }
+        main {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+        }
+        .featured-movies {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin-top: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .movie-card img {
+            height: 300px;
+            object-fit: contain; /* Ensure the image is fully contained within the card */
+            border-radius: 10px;
+            width: 100%; /* Ensure the image width fits the card */
+        }
+        .movie-card .rating {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffa500;
+        }
+        footer {
+            background: #0044cc;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+            }
+            .navbar-toggle {
+                display: flex;
+            }
+        }
+    </style>
+    <!-- Add Bootstrap CSS for card layout -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="navbar-logo">Movie Platform</div>
+            <div class="navbar-toggle" id="navbar-toggle">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <nav class="navbar-menu" id="navbar-menu">
+                <ul>
+                    <li><a href="{% url 'movie_platform:home' %}">Home</a></li>
+                    <li><a href="{% url 'movie_platform:movie_list' %}">Movies</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'movie_platform:profile' %}">Profile</a></li>
+                        <li><a href="{% url 'movie_platform:user_logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'movie_platform:register' %}">Register</a></li>
+                        <li><a href="{% url 'movie_platform:user_login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="featured-movies">
+            <h2>Featured Movies</h2>
+            <div id="featured-movies-list" class="row">
+                <!-- Movies will be dynamically inserted here -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Movie Platform | All Rights Reserved</p>
+    </footer>
+
+    <!-- Add Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById('navbar-toggle').addEventListener('click', function() {
+            var menu = document.getElementById('navbar-menu');
+            var menuMobile = document.getElementById('navbar-menu-mobile');
+            var toggle = this;
+
+            // Toggle mobile menu visibility
+            menuMobile.classList.toggle('open');
+            toggle.classList.toggle('open');
+
+            // Hide desktop menu when mobile menu is open
+            if (menuMobile.classList.contains('open')) {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('navbar-menu').style.display = 'flex';
+                document.getElementById('navbar-menu-mobile').classList.remove('open');
+                document.getElementById('navbar-toggle').classList.remove('open');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var featuredMoviesList = document.getElementById('featured-movies-list');
+            var movies = [
+                { 
+                    title: "Avengers Endgame", 
+                    url: "https://image.tmdb.org/t/p/original/bvYjhsbxOBwpm8xLE5BhdA3a8CZ.jpg",
+                    rating: "8.5/10",
+                    review: "Epic conclusion to the Avengers saga!"
+                },
+                { 
+                    title: "Shawshank Redemption", 
+                    url: "https://c8.alamy.com/comp/2JH2MTT/tim-robbins-movie-poster-the-shawshank-redemption-1994-2JH2MTT.jpg",
+                    rating: "9.3/10",
+                    review: "A timeless story of hope and friendship."
+                },
+                { 
+                    title: "The Godfather", 
+                    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkpQoZ2KJECxFM3PSmAbfj0tvf4tkhGoMB4g&s", /* Updated image for The Godfather */
+                    rating: "9.2/10",
+                    review: "A classic tale of power and family."
+                }
+            ];
+
+            movies.forEach(function(movie) {
+                var movieElement = document.createElement('div');
+                movieElement.classList.add('col-md-4', 'movie-card', 'mb-4');
+                movieElement.innerHTML = `
+                    <div class="card">
+                        <img src="${movie.url}" class="card-img-top" alt="${movie.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${movie.title}</h5>
+                            <p class="rating">Rating: ${movie.rating}</p>
+                            <p class="card-text">${movie.review}</p>
+                            <a href="${movie.url}" target="_blank" class="btn btn-primary">View Poster</a>
+                        </div>
+                    </div>
+                `;
+                featuredMoviesList.appendChild(movieElement);
+            });
+        });
+    </script>
+</body>
+</html>

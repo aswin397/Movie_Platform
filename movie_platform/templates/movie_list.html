@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies - Movie Platform </title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: #f5f5f5;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            header {
+                background: #0044cc;
+                color: white;
+                width: 100%;
+                padding: 15px;
+                box-sizing: border-box;
+                text-align: center;
+            }
+            h1, h2 {
+                margin: 0;
+            }
+            h2 {
+                color: #0044cc;
+            }
+            .container {
+                max-width: 1200px;
+                width: 100%;
+                padding: 20px;
+                box-sizing: border-box;
+            }
+            .search-bar {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            .search-bar input {
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px 0 0 4px;
+                font-size: 16px;
+                width: 300px;
+                outline: none;
+            }
+            .search-bar button {
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 0 4px 4px 0;
+                background-color: #0044cc;
+                color: white;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            .search-bar button:hover {
+                background-color: #0033aa;
+            }
+            .movie-list {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+            .movie-item {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                margin-bottom: 15px;
+                padding: 20px;
+                transition: transform 0.2s;
+            }
+            .movie-item:hover {
+                transform: scale(1.02);
+            }
+            .movie-item img {
+                width: 200px;
+                height: auto;
+                border-radius: 5px;
+                margin-bottom: 10px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .movie-item h3 {
+                margin: 0;
+                color: #0044cc;
+                font-size: 20px;
+            }
+            .movie-item p {
+                color: #666;
+                margin: 10px 0;
+                font-size: 16px;
+            }
+            .movie-item a {
+                text-decoration: none;
+                color: #0044cc;
+                font-size: 16px;
+                font-weight: bold;
+                transition: color 0.3s;
+                display: block;
+                margin-top: 10px;
+            }
+            .movie-item a:hover {
+                color: #0033aa;
+            }
+            .add-movie {
+                display: block;
+                margin: 20px auto;
+                padding: 12px 20px;
+                background-color: #0044cc;
+                color: white;
+                text-align: center;
+                border-radius: 5px;
+                text-decoration: none;
+                font-size: 16px;
+                transition: background-color 0.3s;
+            }
+            .add-movie:hover {
+                background-color: #0033aa;
+            }
+            .home-button {
+                display: block;
+                margin: 20px auto;
+                padding: 10px;
+                background-color: #28a745;
+                color: white;
+                text-align: center;
+                border-radius: 5px;
+                text-decoration: none;
+                font-size: 16px;
+                transition: background-color 0.3s;
+            }
+            .home-button:hover {
+                background-color: #218838;
+            }
+            @media (max-width: 768px) {
+                .search-bar {
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .search-bar input {
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
+                .search-bar button {
+                    width: 100%;
+                }
+            }
+     </style>
+        
+</head>
+<body>
+    <header>
+        <h2>Movie Platform</h2>
+    </header>
+    <div class="container">
+        <a href="{% url 'movie_platform:add_movie' %}" class="add-movie">Add New Movie</a>
+        <div class="search-bar">
+            <input type="text" placeholder="Search movies..." name="search" id="search">
+            <button onclick="performSearch()">Search</button>
+        </div>
+        <div class="movie-list">
+            {% for movie in movies %}
+                <div class="movie-item">
+                    <h3>{{ movie.title }}</h3>
+                    <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+                    <p><strong>Description:</strong> {{ movie.overview }}</p>
+                    <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
+                    <p><strong>Category:</strong> {{ movie.category.name }}</p>
+                    <a href="{% url 'movie_platform:movie_detail' pk=movie.pk %}">View Details</a>
+                    {% if user == movie.user %}
+                        <a href="{% url 'movie_platform:update_movie' pk=movie.pk %}">Edit Movie</a>
+                        <a href="{% url 'movie_platform:delete_movie' pk=movie.pk %}">Delete Movie</a>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>No movies available.</p>
+            {% endfor %}
+        </div>
+        <a href="{% url 'movie_platform:home' %}" class="home-button">Back to Home</a>
+    </div>
+
+    <script>
+        function performSearch() {
+            const searchQuery = document.getElementById('search').value;
+            window.location.href = "{% url 'movie_platform:search_movies' %}?q=" + encodeURIComponent(searchQuery);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Movie Platform</title>
+    <style>
+        /* Reset default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f0f4f8, #e0e7ff);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background: #0044cc;
+            color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .navbar-logo {
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .navbar-menu {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        .navbar-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.3s;
+        }
+        .navbar-menu a:hover {
+            color: #ffeb3b;
+            transform: scale(1.1);
+        }
+        .navbar-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 3px;
+            cursor: pointer;
+        }
+        .navbar-toggle div {
+            width: 25px;
+            height: 3px;
+            background: #ffffff;
+            transition: all 0.3s;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            margin: 20px auto;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #0044cc;
+            text-align: center;
+            font-size: 24px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #333;
+            box-sizing: border-box;
+        }
+        .form-group .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        button {
+            padding: 12px;
+            background-color: #0044cc;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #0033aa;
+            transform: scale(1.02);
+        }
+        a {
+            color: #0044cc;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .home-button {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 20px;
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .home-button:hover {
+            background-color: #218838;
+        }
+        footer {
+            background: #0044cc;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+            }
+            .navbar-toggle {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="navbar-logo">Movie Platform</div>
+            <div class="navbar-toggle" id="navbar-toggle">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <nav class="navbar-menu" id="navbar-menu">
+                <ul>
+                    <li><a href="{% url 'movie_platform:home' %}">Home</a></li>
+                    <li><a href="{% url 'movie_platform:movie_list' %}">Movies</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'movie_platform:profile' %}">Profile</a></li>
+                        <li><a href="{% url 'movie_platform:user_logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'movie_platform:register' %}">Register</a></li>
+                        <li><a href="{% url 'movie_platform:user_login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2>Register</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">Username:</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_first_name">First Name:</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="error">{{ form.first_name.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_last_name">Last Name:</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div class="error">{{ form.last_name.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_email">Email:</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="error">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_password1">Password:</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="error">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_password2">Confirm Password:</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="error">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <a href="{% url 'movie_platform:user_login' %}">Already have an account? Login here.</a>
+        <a href="{% url 'movie_platform:home' %}" class="home-button">Back to Home</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Movie Platform | All Rights Reserved</p>
+    </footer>
+
+    <script>
+        document.getElementById('navbar-toggle').addEventListener('click', function() {
+            var menu = document.getElementById('navbar-menu');
+            menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('navbar-menu').style.display = 'flex';
+            } else {
+                document.getElementById('navbar-menu').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
